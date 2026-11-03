@@ -1,0 +1,616 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bitácora de Viaje FIG & Dra. 🎈🩺</title>
+    <style>
+        :root {
+            --purple-dark: #0d041a;
+            --purple-main: #6b21a8;
+            --purple-light: #9333ea;
+            --purple-soft: #c084fc;
+            --medical-white: #ffffff;
+            --bg-glass: rgba(255, 255, 255, 0.08);
+            --border-purple: rgba(192, 132, 252, 0.35);
+            --accent-gold: #fbbf24;
+            --text-light: #f8fafc;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--purple-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 15px;
+            background: radial-gradient(circle at top center, #2e1065 0%, #08020f 100%);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* --- FONDO ANIMADO FLOTANTE (GLOBOS + ELEMENTOS MÉDICOS) --- */
+        .sky-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .floating-element {
+            position: absolute;
+            bottom: -100px;
+            opacity: 0.6;
+            animation: floatUp 14s infinite linear;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+
+            15% {
+                opacity: 0.7;
+            }
+
+            85% {
+                opacity: 0.7;
+            }
+
+            100% {
+                transform: translateY(-115vh) rotate(20deg);
+                opacity: 0;
+            }
+        }
+
+        /* --- CONTENEDOR PRINCIPAL --- */
+        .container {
+            width: 100%;
+            max-width: 650px;
+            z-index: 10;
+        }
+
+        /* Reproductor de Música */
+        .music-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--purple-main);
+            border: 2px solid var(--purple-light);
+            padding: 10px 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            backdrop-filter: blur(5px);
+            transition: all 0.2s ease;
+        }
+
+            .music-control:hover {
+                transform: scale(1.05);
+                background: #ffffff;
+            }
+
+        /* Header con estética Médica + FIG */
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 25px 20px;
+            border-radius: 24px;
+            border: 1px solid var(--border-purple);
+            backdrop-filter: blur(10px);
+        }
+
+        .badge-doctor {
+            display: inline-block;
+            background: var(--medical-white);
+            color: var(--purple-main);
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+        }
+
+        h1 {
+            color: var(--medical-white);
+            font-size: 1.9rem;
+            margin-bottom: 8px;
+            text-shadow: 0 0 10px rgba(192, 132, 252, 0.5);
+        }
+
+        p.subtitle {
+            color: var(--purple-soft);
+            font-size: 0.95rem;
+        }
+
+        /* Tarjetas */
+        .card {
+            background: var(--bg-glass);
+            backdrop-filter: blur(14px);
+            border: 1px solid var(--border-purple);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .card-title {
+            color: var(--medical-white);
+            font-size: 1.25rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--border-purple);
+            padding-bottom: 8px;
+        }
+
+        /* GALERÍA DE FOTOS DEL FIG */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .gallery-item {
+            position: relative;
+            height: 140px;
+            border-radius: 14px;
+            overflow: hidden;
+            border: 2px solid var(--border-purple);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+            .gallery-item img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.4s ease;
+            }
+
+            .gallery-item:hover img {
+                transform: scale(1.08);
+            }
+
+        /* Contador Regresivo */
+        .countdown-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            text-align: center;
+        }
+
+        .time-box {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 14px;
+            padding: 12px 5px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--purple-main);
+        }
+
+        .label {
+            font-size: 0.75rem;
+            color: #4c1d95;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        /* Lista Check */
+        .checklist {
+            list-style: none;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 14px;
+            border-radius: 12px;
+            border-left: 4px solid var(--medical-white);
+        }
+
+            .checklist-item span {
+                font-size: 1.3rem;
+            }
+
+            .checklist-item strong {
+                color: var(--medical-white);
+            }
+
+        /* Selección de Punto de Encuentro */
+        .options-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-card {
+            position: relative;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--border-purple);
+            border-radius: 14px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+            .option-card:hover {
+                border-color: var(--medical-white);
+                background: rgba(255, 255, 255, 0.1);
+            }
+
+            .option-card input[type="radio"] {
+                position: absolute;
+                opacity: 0;
+            }
+
+            .option-card.selected {
+                border-color: var(--medical-white);
+                background: rgba(147, 51, 234, 0.35);
+                box-shadow: 0 0 15px rgba(192, 132, 252, 0.4);
+            }
+
+        .option-title {
+            font-weight: bold;
+            color: var(--medical-white);
+            margin-bottom: 4px;
+        }
+
+        .option-desc {
+            font-size: 0.85rem;
+            color: var(--purple-soft);
+        }
+
+        textarea {
+            width: 100%;
+            height: 80px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-purple);
+            border-radius: 12px;
+            color: white;
+            padding: 12px;
+            font-size: 0.95rem;
+            resize: none;
+            outline: none;
+            margin-top: 10px;
+        }
+
+            textarea:focus {
+                border-color: var(--medical-white);
+            }
+
+        /* Botón de Confirmación */
+        .btn-submit {
+            width: 100%;
+            background: var(--medical-white);
+            color: var(--purple-main);
+            border: none;
+            padding: 16px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.3);
+            transition: transform 0.2s, background 0.2s;
+        }
+
+            .btn-submit:hover {
+                transform: translateY(-2deg);
+                background: #f1f5f9;
+            }
+
+        .success-banner {
+            display: none;
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid #10b981;
+            color: #a7f3d0;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        /* Carta Motivacional Médica */
+        .medical-letter {
+            background: rgba(255, 255, 255, 0.95);
+            color: #1e1b4b;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+            .medical-letter h3 {
+                color: var(--purple-main);
+                margin-bottom: 12px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 1.2rem;
+            }
+
+            .medical-letter p {
+                font-size: 0.95rem;
+                line-height: 1.6;
+                color: #334155;
+                margin-bottom: 12px;
+            }
+
+        .rx-seal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2.2rem;
+            color: var(--purple-light);
+            opacity: 0.25;
+            font-weight: bold;
+            font-family: Georgia, serif;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- FONDO FLOTANTE DE GLOBOS Y MEDICINA -->
+    <div class="sky-container" id="sky"></div>
+
+    <!-- AUDIO PERSONALIZABLE -->
+    <!-- Coloca tu archivo de música llamado "cancion.mp3" dentro de la carpeta wwwroot -->
+    <audio id="bgMusic" loop src="cancion.mp3"></audio>
+    <button class="music-control" id="musicBtn" onclick="toggleAudio()">
+        🎵 Reproducir Música
+    </button>
+
+    <div class="container">
+
+        <!-- HEADER -->
+        <header>
+            <div class="badge-doctor">🩺 Especial para la futura Médica Cirujana 🩺</div>
+            <h1>Logística del Viaje al FIG 🎈</h1>
+            <p class="subtitle">Indicaciones médicas y preparativos para despegar juntos</p>
+        </header>
+
+        <!-- 1. GALERÍA DE FOTOS DEL FESTIVAL -->
+        <div class="card">
+            <h2 class="card-title">🌄 La Magia que nos Espera en el FIG</h2>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="fig1.jpg" alt="Globos aerostaticos amanecer">
+                </div>
+                <div class="gallery-item">
+                    <img src="fig2.jpg" alt="Festival de globos colores">
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. CONTADOR REGRESIVO -->
+        <div class="card">
+            <h2 class="card-title">⏳ Signos Vitales del Conteo (Tiempo restante)</h2>
+            <div class="countdown-container">
+                <div class="time-box"><span class="number" id="days">00</span><span class="label">Días</span></div>
+                <div class="time-box"><span class="number" id="hours">00</span><span class="label">Horas</span></div>
+                <div class="time-box"><span class="number" id="minutes">00</span><span class="label">Minutos</span></div>
+                <div class="time-box"><span class="number" id="seconds">00</span><span class="label">Segundos</span></div>
+            </div>
+        </div>
+
+        <!-- FORMULARIO DE LOGÍSTICA -->
+        <form id="logisticsForm" action="https://formspree.io/f/xkjjpank" method="POST">
+
+            <!-- 3. PRECRIPCIÓN DE VIAJE / CHECKLIST -->
+            <div class="card">
+                <h2 class="card-title">📋 Prescripción de Equipaje & Vestimenta</h2>
+                <ul class="checklist">
+                    <li class="checklist-item">
+                        <span>🧥</span>
+                        <div>
+                            <strong>Capa Térmica Anti-Frío:</strong> En la madrugada la temperatura baja. Se receta chamarra abrigadora, bufanda o gorro para la primera fase de la mañana.
+                            Para el resto del dia, puede llevar un short o pantalaon comodo, ya que el intenso calor se sentira, y estamos en decidir si mezclilla azul o de color negro la ropa,
+                            para el concierto en la noche.Tu decides que color prefieres y me hacer saber tu deciion.
+                        </div>
+                    </li>
+                    <li class="checklist-item">
+                        <span>👟</span>
+                        <div>
+                            <strong>Calzado Ergonómico:</strong> Puede ser unas botas comodas para tus foto y/o unos tenis con buen soporte para recorrer los terrenos del parque sin fatiga muscular.
+                        </div>
+                    </li>
+                    <li class="checklist-item">
+                        <span>🕶️</span>
+                        <div>
+                            <strong>Protección UV & Energía:</strong> Lentes de sol, bloqueador solar y cable de telefono, ya que lo demas lo llevo yo.
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- 4. PUNTO DE RECOLECCIÓN -->
+            <div class="card">
+                <h2 class="card-title">📍 Ambulancia / Punto de Recolección</h2>
+                <p style="font-size: 0.9rem; margin-bottom: 15px; color: var(--purple-soft);">
+                    Selecciona la mejor ruta de traslado para ti:
+                </p>
+
+                <div class="options-group">
+                    <label class="option-card" onclick="selectOption(this)">
+                        <input type="radio" name="punto_recoleccion" value="Punto medio coordinado">
+                        <div class="option-title">📍 Punto intermedio / Plaza</div>
+                        <div class="option-desc">Nos encontramos en una ubicacancion, como lo es la ford, terminal de tepotzotlan.</div>
+                    </label>
+
+                    <label class="option-card" onclick="selectOption(this)">
+                        <input type="radio" name="punto_recoleccion" value="Sorpresa por definir">
+                        <div class="option-title">✨ Definir por chat</div>
+                        <div class="option-desc">Coordinamos la coordenada exacta más adelante de que punto te comviene mas para recojerte.</div>
+                    </label>
+                </div>
+
+                <div style="margin-top: 15px;">
+                    <label style="font-size: 0.85rem; color: var(--purple-soft);">Prescripción de Snacks / Dosis de café para el trayecto: ☕🍫</label>
+                    <textarea name="dosis_snack" placeholder="¿Qué bebida o antojo necesitas para iniciar la guardia del viaje?"></textarea>
+                </div>
+            </div>
+
+            <!-- BOTÓN ENVIAR -->
+            <button type="submit" class="btn-submit">Confirmar Plan de Viaje 💉✨</button>
+
+            <div class="success-banner" id="successBanner">
+                ¡Prescripción recibida con éxito! Todo listo para nuestra aventura 🎈🩺
+            </div>
+        </form>
+
+        <br>
+
+        <!-- 5. MENSAJE MOTIVACIONAL PARA LA FUTURA CIRUJANA -->
+        <div class="medical-letter">
+            <div class="rx-seal">Rx</div>
+            <h3>🩺 Nota Médica Especial:</h3>
+            <p>
+                Sé lo exigente que es la carrera de Medicina Cirujana, las desveladas, los exámenes y la disciplina imparable que le pones día a día a tu vocación. Admiro profundamente tu entrega y tu capacidad de cuidar de los demás con tanto corazón.
+            </p>
+            <p>
+                Este viaje al Festival del Globo es una pequeña dosis recetada de descanso, sonrisas y momentos mágicos. Así como un cirujano necesita precisión y pausa antes de un gran procedimiento, tú te mereces este respiro para ver el cielo iluminarse y recargar energías.
+            </p>
+            <p style="font-weight: bold; color: var(--purple-main); text-align: right; margin-top: 10px;">
+                ¡Futura Dra., nos espera un viaje inolvidable y electrizante! 🎈✨
+            </p>
+        </div>
+
+    </div>
+
+    <script>
+                // --- 1. GENERADOR DE ELEMENTOS FLOTANTES (GLOBOS Y MEDICINA) ---
+                const sky = document.getElementById('sky');
+                const medicalIcons = ['🩺', '💉', '🩹', '🫀', '💊', '🩺', '✨'];
+                const colors = ['#a855f7', '#ec4899', '#ffffff', '#c084fc', '#8b5cf6'];
+
+                function createFloatingElement() {
+                    const el = document.createElement('div');
+                    el.className = 'floating-element';
+
+                    const isBalloon = Math.random() > 0.4; // 60% globos, 40% elementos médicos
+                    const left = Math.random() * 95;
+                    const duration = Math.random() * 8 + 10; // entre 10s y 18s
+
+                    if (isBalloon) {
+                        const size = Math.random() * 35 + 25;
+                        const color = colors[Math.floor(Math.random() * colors.length)];
+                        el.innerHTML = `
+                            <svg width="${size}" height="${size * 1.3}" viewBox="0 0 50 65">
+                                <path d="M 25 0 C 40 0, 50 15, 50 30 C 50 45, 30 55, 25 58 C 20 55, 0 45, 0 30 C 0 15, 10 0, 25 0 Z" fill="${color}"/>
+                                <polygon points="22,57 28,57 26,62 24,62" fill="${color}"/>
+                                <line x1="23" y1="62" x2="23" y2="65" stroke="#ffffff" stroke-width="1.5"/>
+                                <line x1="27" y1="62" x2="27" y2="65" stroke="#ffffff" stroke-width="1.5"/>
+                            </svg>`;
+                    } else {
+                        const icon = medicalIcons[Math.floor(Math.random() * medicalIcons.length)];
+                        const fontSize = Math.random() * 15 + 20;
+                        el.innerHTML = `<span style="font-size: ${fontSize}px;">${icon}</span>`;
+                    }
+
+                    el.style.left = `${left}%`;
+                    el.style.animationDuration = `${duration}s`;
+                    sky.appendChild(el);
+
+                    setTimeout(() => el.remove(), duration * 1000);
+                }
+
+                setInterval(createFloatingElement, 1800);
+                for(let i = 0; i < 6; i++) createFloatingElement();
+
+                // --- 2. CONTROL DE MÚSICA ---
+                const audio = document.getElementById('bgMusic');
+                const musicBtn = document.getElementById('musicBtn');
+
+                function toggleAudio() {
+                    if (audio.paused) {
+                        audio.play().then(() => {
+                            musicBtn.innerHTML = '⏸️ Pausar Música';
+                        }).catch(() => {
+                            alert("Asegúrate de agregar tu archivo cancion.mp3 dentro de la carpeta wwwroot");
+                        });
+                    } else {
+                        audio.pause();
+                        musicBtn.innerHTML = '🎵 Reproducir Música';
+                    }
+                }
+
+                // --- 3. CONTADOR REGRESIVO FIG ---
+                const targetDate = new Date(2026, 10, 14, 5, 0, 0).getTime();
+
+                function updateCountdown() {
+                    const now = new Date().getTime();
+                    const difference = targetDate - now;
+
+                    if (difference > 0) {
+                        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+                        const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+                        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+                        document.getElementById('days').innerText = days < 10 ? '0' + days : days;
+                        document.getElementById('hours').innerText = hours < 10 ? '0' + hours : hours;
+                        document.getElementById('minutes').innerText = minutes < 10 ? '0' + minutes : minutes;
+                        document.getElementById('seconds').innerText = seconds < 10 ? '0' + seconds : seconds;
+                    } else {
+                        document.querySelector('.countdown-container').innerHTML = "<h3 style='color:#10b981; grid-column: span 4;'>¡Llegó el día del despegue! 🎈🎉</h3>";
+                    }
+                }
+                setInterval(updateCountdown, 1000);
+                updateCountdown();
+
+                // --- 4. SELECCIÓN DE OPCIONES ---
+                function selectOption(element) {
+                    document.querySelectorAll('.option-card').forEach(card => card.classList.remove('selected'));
+                    element.classList.add('selected');
+                }
+
+                // --- 5. ENVÍO DE FORMULARIO ---
+                const form = document.getElementById('logisticsForm');
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    const formData = new FormData(form);
+
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: { 'Accept': 'application/json' }
+                    });
+
+                    if (response.ok || form.action.includes('https://formspree.io/f/xkjjpank')) {
+                        document.getElementById('successBanner').style.display = 'block';
+                        form.querySelector('.btn-submit').style.display = 'none';
+                    }
+                });
+    </script>
+</body>
+</html>
